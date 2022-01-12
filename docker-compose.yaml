@@ -4,6 +4,14 @@ services:
   logstash:
     container_name: logstash
     hostname: logstash
+    deploy:
+      resources:
+        limits:
+          cpus: 6
+          memory: 8G
+        reservations:
+          cpus: 6
+          memory: 8G
     build:
       context: ./logstash
     ports:
@@ -19,6 +27,13 @@ services:
     hostname: fluentd
     deploy:
       replicas: 10
+      resources:
+        limits:
+          cpus: 1
+          memory: 8G
+        reservations:
+          cpus: 1
+          memory: 8G
     build:
       context: ./fluentd
     volumes:
