@@ -1,0 +1,1 @@
+FROM haproxytech/haproxy-debian:2.5.1

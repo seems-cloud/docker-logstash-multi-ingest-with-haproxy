@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  logstash:
+    container_name: logstash
+    hostname: logstash
+    build:
+      context: ./logstash
+    ports:
+      - "9600:9600"
+    volumes:
+      - ${PWD}/logstash/files/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ${PWD}/logstash/files/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ${PWD}/logstash/files/ingest0.conf:/usr/share/logstash/pipeline/ingest0.conf:ro
+      - ${PWD}/logstash/files/ingest1.conf:/usr/share/logstash/pipeline/ingest1.conf:ro
+      - ${PWD}/logstash/files/ingest2.conf:/usr/share/logstash/pipeline/ingest2.conf:ro
+      - ${PWD}/logstash/files/fluentd.conf:/usr/share/logstash/pipeline/fluentd.conf:ro
+  fluentd:
+    hostname: fluentd
+    deploy:
+      replicas: 10
+    build:
+      context: ./fluentd
+    volumes:
+      - data:/data:ro
+      - ${PWD}/fluentd/files/fluent.conf:/fluentd/etc/fluent.conf:ro
+  logs:
+    container_name: logs
+    hostname: logs
+    build:
+      context: ./logs
+    volumes:
+      - data:/data:rw
+  haproxy:
+    container_name: haproxy
+    hostname: haproxy
+    build:
+      context: ./haproxy
+    volumes:
+      - ${PWD}/haproxy/files/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+volumes:
+  data:
