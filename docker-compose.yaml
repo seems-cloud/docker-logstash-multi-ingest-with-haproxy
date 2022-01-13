@@ -26,7 +26,7 @@ services:
   fluentd:
     hostname: fluentd
     deploy:
-      replicas: 10
+      replicas: 1
       resources:
         limits:
           cpus: 1
@@ -52,8 +52,17 @@ services:
     build:
       context: ./haproxy
     ports:
-      - "8404:8404"
+      - "9090:9090"
     volumes:
       - ${PWD}/haproxy/files/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+  haproxy-exporter:
+    container_name: haproxy-exporter
+    hostname: haproxy-exporter
+    command:
+      - --haproxy.scrape-uri=http://haproxy:9090/stats;csv
+    build:
+      context: ./haproxy-exporter
+    ports:
+      - "9101:9101"
 volumes:
   data:
